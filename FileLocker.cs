@@ -37,14 +37,11 @@ namespace FileLockerLib
         public bool lockFile(string filePath)
         {
 
-            FileLockerPayload payload = new FileLockerPayload();
+            FileLockerPayload payload = null;
 
             if (isLock)
             {
-
-                payload.code = FILE_LOCKER_MESSAGE_CODE.LOCK_ALREADY_BY_PROCESS;
-                payload.message = FILE_LOCKER_MESSAGE_CODE.LOCK_ALREADY_BY_PROCESS.ToString();
-
+                payload = setPayload(FILE_LOCKER_MESSAGE_CODE.LOCK_ALREADY_BY_PROCESS, FILE_LOCKER_MESSAGE_CODE.LOCK_ALREADY_BY_PROCESS.ToString());
             }
             else
             {
@@ -62,28 +59,17 @@ namespace FileLockerLib
                         stream = File.Open(fileLock, FileMode.Open);
                     }
 
-                    payload.code = FILE_LOCKER_MESSAGE_CODE.SUCCESS;
-                    payload.message = FILE_LOCKER_MESSAGE_CODE.SUCCESS.ToString();
+                    payload = setPayload(FILE_LOCKER_MESSAGE_CODE.SUCCESS, FILE_LOCKER_MESSAGE_CODE.SUCCESS.ToString());
 
                     _isLock = true;
                 }
-                catch (DirectoryNotFoundException ex)
-                {
-                    payload.code = FILE_LOCKER_MESSAGE_CODE.UNABLE_TO_CREATE_LOCK;
-                    payload.message = ex.Message;
-
-                    _isLock = false;
-                }
                 catch (Exception ex)
                 {
-                    payload.code = FILE_LOCKER_MESSAGE_CODE.UNABLE_TO_CREATE_LOCK;
-                    payload.message = ex.Message;
-
+                    payload = setPayload(FILE_LOCKER_MESSAGE_CODE.UNABLE_TO_CREATE_LOCK, ex.Message);
                     _isLock = false;
                 }
 
             }
-
 
             if (_enableEvents)
             {
@@ -109,9 +95,7 @@ namespace FileLockerLib
                 if (_enableEvents)
                 {
 
-                    FileLockerPayload payload = new FileLockerPayload();
-                    payload.code = FILE_LOCKER_MESSAGE_CODE.RELEASE_LOCK;
-                    payload.message = FILE_LOCKER_MESSAGE_CODE.RELEASE_LOCK.ToString();
+                    FileLockerPayload payload = setPayload(FILE_LOCKER_MESSAGE_CODE.RELEASE_LOCK, FILE_LOCKER_MESSAGE_CODE.RELEASE_LOCK.ToString());
                     FileLockerHandler(payload);
                 }
 
@@ -123,7 +107,7 @@ namespace FileLockerLib
 
         public bool deleteLockFile()
         {
-            FileLockerPayload payload = new FileLockerPayload();
+            FileLockerPayload payload = null;
             bool isSuccess = false;
 
             if (_fileLock != string.Empty)
@@ -131,9 +115,7 @@ namespace FileLockerLib
 
                 if (_isLock)
                 {
-                    payload.code = FILE_LOCKER_MESSAGE_CODE.LOCK_ALREADY_BY_PROCESS;
-                    payload.message = FILE_LOCKER_MESSAGE_CODE.LOCK_ALREADY_BY_PROCESS.ToString();
-
+                    payload = setPayload(FILE_LOCKER_MESSAGE_CODE.LOCK_ALREADY_BY_PROCESS, FILE_LOCKER_MESSAGE_CODE.LOCK_ALREADY_BY_PROCESS.ToString());
                 }
                 else
                 {
@@ -145,16 +127,13 @@ namespace FileLockerLib
                     }
                     catch (Exception ex)
                     {
-                        payload.code = FILE_LOCKER_MESSAGE_CODE.UNABLE_DELETE_LOCK;
-                        payload.message = ex.Message;
-
+                        payload = setPayload(FILE_LOCKER_MESSAGE_CODE.UNABLE_DELETE_LOCK, ex.ToString());
                         isSuccess = false;
                     }
                 }
             }
             else {
-                payload.code = FILE_LOCKER_MESSAGE_CODE.LOCK_NOT_EXISTS;
-                payload.message = FILE_LOCKER_MESSAGE_CODE.LOCK_NOT_EXISTS.ToString();
+                payload = setPayload(FILE_LOCKER_MESSAGE_CODE.LOCK_NOT_EXISTS, FILE_LOCKER_MESSAGE_CODE.LOCK_NOT_EXISTS.ToString());
             }
 
             if (_enableEvents)
@@ -163,6 +142,15 @@ namespace FileLockerLib
             }
 
             return isSuccess;
+        }
+
+        private FileLockerPayload setPayload(FILE_LOCKER_MESSAGE_CODE code, string message) {
+
+            FileLockerPayload payload = new FileLockerPayload();
+            payload.code = code;
+            payload.message = message;
+
+            return payload;
         }
 
     }

@@ -5,7 +5,7 @@ Simple library for synchronize processes using file as lock.
 
 Usage:
 ```C#
- static FileLocker locker;
+        static FileLocker locker;
         static int releaseCounter = 0;
         static int releaseAfter = 10;
 

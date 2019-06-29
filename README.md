@@ -3,7 +3,7 @@ Simple library for synchronize processes using file as lock.
 
 ![alt text](https://raw.githubusercontent.com/proxytype/FlieLockerLib/master/page-order-cpu-overheat.gif)
 
-# usage:
+Usage:
 ```C#
  static FileLocker locker;
         static int releaseCounter = 0;
@@ -47,5 +47,8 @@ Simple library for synchronize processes using file as lock.
         //getting feedback from the locker
         private static void Locker_FileLockerHandler(FileLockerPayload payload)
         {
-            Console.WriteLine(Process.GetCurrentProcess().ProcessName + " - Locker Response:" + payload.code.ToString() + " Message:" + payload.message);
+            Console.WriteLine(Process.GetCurrentProcess().ProcessName 
+            + " - Locker Response:" + payload.code.ToString() 
+            + " Message:" + payload.message);
+        }
 ```
